@@ -722,4 +722,5 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             activityRef.get().receiveMuseArtifactPacket(p, muse);
         }
     }
+    
 }

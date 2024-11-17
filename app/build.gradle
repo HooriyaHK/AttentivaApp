@@ -1,7 +1,8 @@
 plugins {
     id 'com.android.application'
-    //id 'com.google.gms.google-services'
+    id 'com.google.gms.google-services' // Uncomment if you use Firebase features requiring this plugin
 }
+
 android {
     compileSdk 34
 
@@ -9,6 +10,8 @@ android {
         applicationId "com.choosemuse.example.libmuse"
         minSdk 23
         targetSdk 34
+
+        // Ensure Java compatibility
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
@@ -17,25 +20,31 @@ android {
 
     buildTypes {
         release {
+            // Disable code shrinking for debugging; use ProGuard if needed
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     namespace 'com.choosemuse.example.libmuse'
 }
 
 dependencies {
+    // Local libraries (JAR/AAR files)
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+
+
+    // Core libraries
     implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation 'androidx.navigation:navigation-ui:2.8.4'
-    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation 'com.google.firebase:firebase-auth:23.1.0'
-    implementation 'com.google.firebase:firebase-firestore:25.1.1'
-    implementation 'com.google.android.material:material:1.9.0' // Latest version
+    implementation "androidx.navigation:navigation-ui:2.8.4"
+    implementation 'com.google.android.material:material:1.9.0'
 
-
-
+    // Firebase dependencies
+    implementation platform("com.google.firebase:firebase-bom:33.6.0") // Use BoM for version alignment
+    implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-auth:23.1.0"
+    implementation "com.google.firebase:firebase-firestore:25.1.1"
 }
 
 repositories {

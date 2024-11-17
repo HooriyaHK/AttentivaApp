@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "725623193930",
+    "project_id": "brain-app-6a05e",
+    "storage_bucket": "brain-app-6a05e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725623193930:android:5411d9dc4e75adf42a81b3",
+        "android_client_info": {
+          "package_name": "com.choosemuse.example.libmuse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD14-WNgGYvKa2H32OWkWJhI1Oep2UPaJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725623193930:android:97678e931f67f1a82a81b3",
+        "android_client_info": {
+          "package_name": "com.example.brainapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD14-WNgGYvKa2H32OWkWJhI1Oep2UPaJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

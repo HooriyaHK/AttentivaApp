@@ -2,87 +2,54 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
-    <uses-permission
-        android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission
         android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation"
         tools:targetApi="s" />
-    <uses-permission
-        android:name="android.permission.BLUETOOTH"
-        android:maxSdkVersion="30" />
-    <uses-permission
-        android:name="android.permission.BLUETOOTH_ADMIN"
-        android:maxSdkVersion="30" />
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION"
-        android:maxSdkVersion="30" />
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
+        <!-- Main Activity -->
         <activity
             android:name="com.choosemuse.example.libmuse.MainActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        <activity
-            android:name=".RegistrationActivity"
-            android:exported="true"
-            android:theme="@style/Theme.BrainApp">
-        </activity>
 
-        &lt;!&ndash; MainActivity for later navigation &ndash;&gt;
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Attentiva">
-        </activity>
-
-        &lt;!&ndash; TipDetailActivity to show details of the selected tip &ndash;&gt;
-        <activity
-            android:name=".TipDetailActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Attentiva">
-        </activity>
-        <activity
-            android:name=".StartMuse"
-            android:exported="true"
-            android:theme="@style/Theme.Attentiva">
-        </activity>-->
+        <!-- Additional Activities -->
         <activity
             android:name=".HomeActivity"
             android:exported="true"
-            android:theme="@style/Theme.Attentiva">
-        </activity>
+            android:theme="@style/Theme.Attentiva" />
         <activity
             android:name=".MuseActivity"
             android:exported="true"
-            android:theme="@style/Theme.Attentiva">
-        </activity>
+            android:theme="@style/Theme.Attentiva" />
         <activity
             android:name=".MuseRuns"
             android:exported="true"
-            android:theme="@style/Theme.Attentiva">
-        </activity>
+            android:theme="@style/Theme.Attentiva" />
 
+        <!-- Preloaded Fonts -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-
     </application>
-
 </manifest>
