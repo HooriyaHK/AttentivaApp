@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.application'
-    id 'com.google.gms.google-services' // Uncomment if you use Firebase features requiring this plugin
+    id 'com.android.application'  // Android plugin
+    id 'com.google.gms.google-services'  // Firebase plugin (if you're using Firebase)
 }
 
 android {
@@ -16,38 +16,24 @@ android {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
+
+        // Optional: You usually don't need to manually specify source sets unless you have a custom structure
+        // By default, Android Studio automatically handles the source sets.
     }
 
     buildTypes {
         release {
-            // Disable code shrinking for debugging; use ProGuard if needed
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
-    namespace 'com.choosemuse.example.libmuse'
+    namespace 'com.choosemuse.example.libmuse'  // Defines the package namespace
 }
 
 dependencies {
-    // Local libraries (JAR/AAR files)
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-
-
-
-    // Core libraries
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.navigation:navigation-ui:2.8.4"
-    implementation 'com.google.android.material:material:1.9.0'
-
-    // Firebase dependencies
-    implementation platform("com.google.firebase:firebase-bom:33.6.0") // Use BoM for version alignment
-    implementation "com.google.firebase:firebase-analytics"
-    implementation "com.google.firebase:firebase-auth:23.1.0"
-    implementation "com.google.firebase:firebase-firestore:25.1.1"
-}
-
-repositories {
-    google()
-    mavenCentral()
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.firebase:firebase-analytics'  // Example Firebase dependency
+    // Add other dependencies here
 }

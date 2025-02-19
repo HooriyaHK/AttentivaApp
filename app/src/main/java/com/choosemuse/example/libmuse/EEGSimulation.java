@@ -1,152 +1,127 @@
 package com.choosemuse.example.libmuse;
 
-import com.choosemuse.libmuse.*;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class EEGSimulation {
-    private static CircularBuffer eegBuffer;
-    private static CircularBuffer fftBuffer;
-
-    public void main(String[] args) {
+public class EEGSimulation extends AppCompatActivity {
+    public static void main(String[] args) {
         int bufferCapacity = 60; // Store 60 samples for 1 minute (1 sample per second)
-        int numChannels = 4;     // Number of EEG channels
-
-        eegBuffer = new CircularBuffer(bufferCapacity, numChannels);
-        fftBuffer = new CircularBuffer(bufferCapacity, numChannels);
+        int numChannels = 4; // Number of EEG channels
+        CircularBuffer eegBuffer = new CircularBuffer(bufferCapacity, numChannels);
+        CircularBuffer fftBuffer = new CircularBuffer(bufferCapacity, numChannels);
 
         System.out.println("Starting EEG simulation with " + bufferCapacity + " buffer capacity and " + numChannels + " channels.");
 
-        // Initialize Muse Manager
-        MuseManagerAndroid manager = MuseManagerAndroid.getInstance();
-        manager.setContext(null); // Replace `null` with your Application/Activity context
-
-        // Search and connect to Muse
-        manager.startListening();
-        List<Muse> availableMuse = manager.getMuses();
-        if (availableMuse.isEmpty()) {
-            System.out.println("No Muse devices found.");
-            return;
-        }
-
-        Muse muse = availableMuse.get(0); // Connect to the first available Muse
-        System.out.println("Connecting to Muse device: " + muse.getName());
-        setupMuse(muse);
-
-        // Timer to process data every second
+        // Timer to simulate EEG data collection and analysis every second
         Timer timer = new Timer();
+
+        // Timer task for periodic EEG data sampling
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
-                    // Get the latest EEG sample from the buffer
-                    float[] newSample = getSampleFromBuffer(eegBuffer);
-                    if (newSample == null) {
-                        System.out.println("No data available in the buffer yet.");
-                        return;
-                    }
+                    System.out.println("TimerTask is running..."); // Debug log
 
-                    // Perform FFT and focus analysis
+                    // Simulate getting new data from Muse SDK
+                    float[] newSample = getSample(numChannels);
+                    eegBuffer.addSample(newSample);
+
+                    // Perform FFT-like processing on the most recent sample
                     float[] fftResult = simpleFrequencyAnalysis(newSample);
+
+                    // Add the result to the FFT buffer
                     fftBuffer.addSample(fftResult);
+
+                    // Check the focus state based on wavebands
                     String focusState = determineFocusState(fftResult);
 
-                    System.out.println("EEG Sample: " + Arrays.toString(newSample));
-                    System.out.println("FFT Result: " + Arrays.toString(fftResult));
+                    // Print EEG buffer, FFT buffer, and focus state for debugging
+                    System.out.println("New EEG Sample: " + Arrays.toString(newSample));
+                    System.out.println("New FFT Result: " + Arrays.toString(fftResult));
                     System.out.println("User is currently: " + focusState);
                 } catch (Exception e) {
+                    System.out.println("Exception occurred in TimerTask: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
-        }, 0, 1000);
-    }
+        }, 0, 1000); // Run every 1 second
 
-    private static void setupMuse(Muse muse) {
-        muse.registerConnectionListener(new MuseConnectionListener() {
-            @Override
-            public void receiveMuseConnectionPacket(MuseConnectionPacket p, Muse muse) {
-                switch (p.getCurrentConnectionState()) {
-                    case CONNECTED:
-                        System.out.println("Muse is connected!");
-                        break;
-                    case DISCONNECTED:
-                        System.out.println("Muse is disconnected!");
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
-        muse.registerDataListener(new MuseDataListener() {
-            @Override
-            public void receiveMuseDataPacket(MuseDataPacket p, Muse muse) {
-                if (p.packetType() == MuseDataPacketType.EEG) {
-                    float[] values = new float[(int) p.valuesSize()];
-                    for (int i = 0; i < values.length; i++) {
-                        values[i] = (float) p.getEegChannelValue(Eeg.values()[i]);
-                    }
-                    eegBuffer.addSample(values);
-                }
-            }
-
-            @Override
-            public void receiveMuseArtifactPacket(MuseArtifactPacket p, Muse muse) {
-                // Handle artifacts if needed (e.g., blinks, jaw clenches)
-            }
-        }, MuseDataPacketType.EEG);
-
-        muse.runAsynchronously();
-    }
-
-    // Get the latest sample from the EEG buffer
-    private static float[] getSampleFromBuffer(CircularBuffer buffer) {
-        float[] sample = buffer.getSample((buffer.capacity() - 1) % buffer.capacity());
-        if (sample == null) return null;
-
-        float[] result = new float[sample.length];
-        for (int i = 0; i < sample.length; i++) {
-            result[i] = (float) sample[i];
+        // Sleep to allow TimerTask to execute for 5 seconds before the main thread exits
+        try {
+            Thread.sleep(5000); // Allow TimerTask to run for 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return result;
+
+        System.out.println("Main method is exiting...");
     }
 
-    // Simple FFT-like analysis
+    // Simulate getting EEG sample data from Muse SDK
+    private static float[] getSample(int numChannels) {
+        Random random = new Random();
+        float[] sample = new float[numChannels];
+        for (int i = 0; i < numChannels; i++) {
+            sample[i] = random.nextFloat(); // Generate random EEG values
+        }
+        System.out.println("Generated new sample: " + Arrays.toString(sample));
+        return sample;
+    }
+
+    // Simulate simple frequency analysis (FFT-like)
     private static float[] simpleFrequencyAnalysis(float[] sample) {
         int n = sample.length;
         float[] magnitudes = new float[n];
+
         for (int i = 0; i < n; i++) {
             magnitudes[i] = Math.abs(sample[i]); // Use magnitude of the values
         }
+
+        System.out.println("FFT-like analysis results: " + Arrays.toString(magnitudes));
         return magnitudes;
     }
 
-    // Determine focus state based on FFT result
+    // Determine focus state based on FFT result (magnitude of frequencies)
     private static String determineFocusState(float[] fftResult) {
-        float alphaBandThreshold = 0.3f;
-        float betaBandThreshold = 0.7f;
-        float gammaBandThreshold = 0.5f;
+        // Ensure we have enough channels in the fftResult array (in this case, 4)
+        if (fftResult.length < 4) {
+            throw new IllegalArgumentException("Not enough frequency bands in FFT result.");
+        }
 
-        int alphaStart = 0, alphaEnd = 1;
-        int betaStart = 1, betaEnd = 2;
-        int gammaStart = 2, gammaEnd = 3;
+        float alphaBandThreshold = 0.3f; // Threshold for alpha waves (relaxed state)
+        float betaBandThreshold = 0.7f; // Threshold for beta waves (focused state)
+        float gammaBandThreshold = 0.5f; // Threshold for gamma waves (high cognitive processing)
 
+        // Define frequency band indices based on FFT result size
+        int alphaStart = 0, alphaEnd = 1;  // Assuming first channel for Alpha
+        int betaStart = 1, betaEnd = 2;    // Assuming second channel for Beta
+        int gammaStart = 2, gammaEnd = 3;  // Assuming third channel for Gamma
+
+        // Calculate average magnitudes in each frequency band
         float alphaMagnitude = calculateBandMagnitude(fftResult, alphaStart, alphaEnd);
         float betaMagnitude = calculateBandMagnitude(fftResult, betaStart, betaEnd);
         float gammaMagnitude = calculateBandMagnitude(fftResult, gammaStart, gammaEnd);
 
+        String focusState = "Neutral"; // Default to Neutral
         if (betaMagnitude > betaBandThreshold && gammaMagnitude > gammaBandThreshold) {
-            return "Focused";
+            focusState = "Focused";
         } else if (alphaMagnitude > alphaBandThreshold) {
-            return "Unfocused";
+            focusState = "Unfocused";
         }
-        return "Neutral";
+
+        System.out.println("Focus state determined: " + focusState);
+        return focusState;
     }
 
+    // Calculate the average magnitude in a specific frequency band
     private static float calculateBandMagnitude(float[] fftResult, int startIdx, int endIdx) {
+        if (startIdx < 0 || endIdx > fftResult.length) {
+            throw new IllegalArgumentException("Invalid frequency band indices.");
+        }
+
         float sum = 0;
         int count = 0;
 
@@ -154,38 +129,35 @@ public class EEGSimulation {
             sum += fftResult[i];
             count++;
         }
-        return (count == 0) ? 0 : sum / count;
+
+        float average = (count == 0) ? 0 : sum / count;
+        System.out.println("Calculated band magnitude from indices " + startIdx + " to " + endIdx + ": " + average);
+        return average;
+    }
+}
+
+class CircularBuffer {
+    private float[][] buffer;
+    private int capacity;
+    private int numChannels;
+    private int index;
+
+    public CircularBuffer(int capacity, int numChannels) {
+        this.capacity = capacity;
+        this.numChannels = numChannels;
+        this.buffer = new float[capacity][numChannels];
+        this.index = 0;
     }
 
-    public class CircularBuffer {
-        private float[][] buffer;
-        public int capacity;
-        private int numChannels;
-        private int index;
-
-        public CircularBuffer(int capacity, int numChannels) {
-            this.capacity = capacity;
-            this.numChannels = numChannels;
-            this.buffer = new float[capacity][numChannels];
-            this.index = 0;
+    public void addSample(float[] sample) {
+        if (sample.length != numChannels) {
+            throw new IllegalArgumentException("Sample size does not match the number of channels.");
         }
-
-        public void addSample(float[] values) {
-            if (values.length != numChannels) {
-                throw new IllegalArgumentException("Sample size does not match the number of channels.");
-            }
-            buffer[index] = values;
-            index = (index + 1) % capacity;
-        }
-
-        public float[] getSample(int index) {
-            return buffer[index];
-        }
-
-        public int capacity() {
-            return capacity;
-        }
-
+        buffer[index] = sample;
+        index = (index + 1) % capacity;
     }
 
+    public float[] getSample(int index) {
+        return buffer[index];
+    }
 }

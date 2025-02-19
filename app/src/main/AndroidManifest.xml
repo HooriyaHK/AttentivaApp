@@ -45,6 +45,10 @@
             android:name=".MuseRuns"
             android:exported="true"
             android:theme="@style/Theme.Attentiva" />
+        <activity
+            android:name=".EEGSimulation"
+            android:exported="true"
+            android:theme="@style/Theme.Attentiva" />
 
         <!-- Preloaded Fonts -->
         <meta-data
